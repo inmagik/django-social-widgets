@@ -1,8 +1,5 @@
-from django.conf.urls import patterns, include, url
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls import include, url
 
-urlpatterns = patterns('',
+urlpatterns = [
     url("", include("example.urls")),
-)
-
-urlpatterns += staticfiles_urlpatterns()
+]
