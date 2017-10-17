@@ -2,6 +2,11 @@ import re
 
 from locale import normalize
 
+try:
+    from django.conf import settings
+except:
+    settings = None
+
 from django.template import loader, TemplateDoesNotExist
 from django.template.base import Node, TemplateSyntaxError
 from django.utils.encoding import smart_text
@@ -129,6 +134,15 @@ def social_widget_render(parser, token):
     For example to render Twitter follow button you can use code like this:
     {% social_widget_render 'twitter/follow_button.html' username="ev" %}
     """
+    from django.conf import settings
+
+    DEFAULT_SETTINGS = dict(og_type=u'website')
+
+    default_settings = dict()
+
+    for key, value in DEFAULT_SETTINGS.iteritems():
+        default_settings[key] = parser.compile_filter(value)
+
     bits = token.split_contents()
     tag_name = bits[0]
 
@@ -156,7 +170,12 @@ def social_widget_render(parser, token):
             else:
                 args.append(parser.compile_filter(value))
 
-    return SocialWidgetNode(args, kwargs)
+    if hasattr(settings, 'SOCIAL_WIDGETS'):
+        default_settings.update(settings.SOCIAL_WIDGETS)
+
+    default_settings.update(kwargs)
+
+    return SocialWidgetNode(args, default_settings)
 
 
 @register.assignment_tag

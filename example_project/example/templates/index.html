@@ -9,11 +9,7 @@
     <link rel="stylesheet" href="{% static "example/css/main.css" %}">
     <style>
     </style>
-    <meta property="og:url" content="http://www.your-domain.com/your-page.html"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:title" content="Your Website Title"/>
-    <meta property="og:description" content="Your description"/>
-    <meta property="og:image" content="http://www.your-domain.com/path/image.jpg"/>
+    {% social_widget_render "facebook/header.html" url="" %}
 </head>
 <body>
 <a href="https://github.com/creafz/django-social-widgets"><img style="position: absolute; top: 0; right: 0; border: 0;"
