@@ -59,7 +59,7 @@ class SocialWidgetNode(Node):
 
     def render(self, context):
         args = [arg.resolve(context) for arg in self.args]
-        kwargs = dict((smart_text(k, 'ascii'), v.resolve(context))
+        kwargs = dict((smart_text(k), v.resolve(context))
                       for k, v in self.kwargs.items())
 
         # If user didn't specify the language in the template tag arguments get
@@ -136,12 +136,14 @@ def social_widget_render(parser, token):
     """
     from django.conf import settings
 
-    DEFAULT_SETTINGS = dict(og_type=u'website')
+    DEFAULT_SETTINGS = dict(og_type='website', size='small')
+    if hasattr(settings, 'SOCIAL_WIDGETS'):
+        DEFAULT_SETTINGS.update(settings.SOCIAL_WIDGETS)
 
-    default_settings = dict()
+    def_bits = []
 
-    for key, value in DEFAULT_SETTINGS.iteritems():
-        default_settings[key] = parser.compile_filter(value)
+    for key, value in DEFAULT_SETTINGS.items():
+        def_bits.extend(['%s="%s"' % (key, value)])
 
     bits = token.split_contents()
     tag_name = bits[0]
@@ -153,6 +155,7 @@ def social_widget_render(parser, token):
     kwargs = {}
 
     bits = bits[1:]
+    bits.extend(def_bits)
 
     if len(bits):
         for bit in bits:
@@ -170,12 +173,9 @@ def social_widget_render(parser, token):
             else:
                 args.append(parser.compile_filter(value))
 
-    if hasattr(settings, 'SOCIAL_WIDGETS'):
-        default_settings.update(settings.SOCIAL_WIDGETS)
+    DEFAULT_SETTINGS.update(kwargs)
 
-    default_settings.update(kwargs)
-
-    return SocialWidgetNode(args, default_settings)
+    return SocialWidgetNode(args, DEFAULT_SETTINGS)
 
 
 @register.assignment_tag
