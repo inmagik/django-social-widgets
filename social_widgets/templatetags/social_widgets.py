@@ -136,7 +136,7 @@ def social_widget_render(parser, token):
     """
     from django.conf import settings
 
-    DEFAULT_SETTINGS = dict(og_type='website', size='small')
+    DEFAULT_SETTINGS = dict(og_type='website')
     if hasattr(settings, 'SOCIAL_WIDGETS'):
         DEFAULT_SETTINGS.update(settings.SOCIAL_WIDGETS)
 
